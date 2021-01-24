@@ -1,9 +1,64 @@
 server:
   port: 9005
-  servlet:
-    context-path: /auth
 
 spring:
   application:
-    name: authServer
+    name: authserver
+
+eureka:
+  client:
+    registerWithEureka: true
+    serviceUrl:
+      defaultZone: ${EUREKA_SERVER:http://10.177.2.21:8761/eureka}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - mappings
+          - env
+          - health
+          - info
+
+config:
+    oauth2:
+        clientid: apigateway
+        clientSecret: secret
+        privateKey: -----BEGIN RSA PRIVATE KEY-----
+                    MIIEpgIBAAKCAQEAwUS/w4gwz+s/TjnFj30OJu17duMlK85WLXxZcPZDBYhxVNuW
+                    nBGCvvDBEdF51jICsbyBKb2W60b4JIA1aKnRB2+fyXF2Of92WUoieEmhhbRLki8r
+                    XcmRs5bGmtGIx4x//p/QsdwmuryS+kkTh4lleNuQut5CDp3TvkYx+6OjfQm4E4Pa
+                    h/j6QGGkVgA8wZd/ojZrJnm8NPq/aIkKZh6z/nkH89YI7FfWSH+si2mve5Ro5uYi
+                    gps68BqaEwdeVLuFftVrYXyGNtxpBVEE5l6xv79IsFBk18PU10YUho/hkGd1+b+d
+                    9OrBtmY8bSh8fFrmyNjjZMphMsQDB8rYouInNQIDAQABAoIBAQCd2qEl+16i8+nI
+                    4rbR87pTYTSubeg2V1lb3WzQLtOe+UpXnOLupf68JbgL7aQtprs8oFJ+3TMfB+A1
+                    L+JvkgQAptNDnUCLLnRjiYGN7dXXduMiixRIjhJLNKMSYIHvOnpwZef23XFkpBEI
+                    DBe/ZCFVDUCw4Efj2FTR3FOGzKkDvja80MKiTLl646Q8PPxqgKVB7SoGAGuxSVIw
+                    5WYGmZf0LRT9mLYM+4XTVUs+bG7+qSwB1UQZO+MZnVdgWDjGQDGpMiKMRPAWcwOf
+                    NdIRs6fYpUjot4rJILGNSCUr/T4OpILNIQjFtTdYvodWY59R1ujYE0i0QEY0F+IT
+                    KLDQMZIBAoGBAPk/dWgV3U+8+CPfICgTFydRwFjnMnih3RYegaHmrJS9Nuo/Fy1Z
+                    0u7/RhfqzqW+PWxxwbQiApQBYbiUCMBd745Wv950QujwUmHXKIfjW1WXhZ+jOU16
+                    h8Fey66+5SfXSy6jzg0lgU+cHupSYKXy99yXX4PZUNeyY54azaDT+EMxAoGBAMaB
+                    EneO2Du2lHjtef/BdEtLIaZqFHwAIkYvLBEXkh1aQaa95pe/beVDglvK/+eYuU1w
+                    vHzYz3Vb6kUs48qLbv5EL/hyJNs9uXYCiNJfdgTTkZ0MBEnnJYckLrT1h43vRluu
+                    sHTi25cl/xW0zXknwUMhJ8xl0md3lfetik2cx/tFAoGBAKeIew8qWyakuxnJeWDW
+                    bCK2tZZMWMVy7xtWCAZd+bTEdiv/mkGWdczFc0TSRHJtq/W/hNbiYV9AioG5pyQ+
+                    P64qKy+IcA0ItCclqw2jyZl/joad/P9SE/vrDvd3QqqD8Pn5ip+VjRSIuNMB6grB
+                    hM8WRFJoeQly07jLBVpMADyRAoGBAJQyiLb5zjXGedJOeWaX51rPHLBBQknRT8VW
+                    MnAQSOXhHGKAJEfmgwVHAWvGgodFXhKSuCX9N+VGWgCLIwV0U8lA3w99KEcGLhAM
+                    lFl7K4Eu8udssUb7aukZ+kTfifRNTxnjsZmSRJ7znx11fnGVXJPhjPTsj8jvXucq
+                    iLao9iSBAoGBALU3Tgbl1TAZyMD7YOSK1DJjm9Le5r6/m7b8HHrmhlOizWPHUg2q
+                    4rLPKIMf6g4hbq/W7AQSaRqUZXPcDnQadSmNcBIWHoVPx8YzsXDT0RvMS3rr3jrG
+                    QqdqH1iG45bkERC33JKFRZ0ENYo/8bia9bxNit3EsjTh/otuDAoYZR9y
+                    -----END RSA PRIVATE KEY-----
+        publicKey: -----BEGIN PUBLIC KEY-----
+                   MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwUS/w4gwz+s/TjnFj30O
+                   Ju17duMlK85WLXxZcPZDBYhxVNuWnBGCvvDBEdF51jICsbyBKb2W60b4JIA1aKnR
+                   B2+fyXF2Of92WUoieEmhhbRLki8rXcmRs5bGmtGIx4x//p/QsdwmuryS+kkTh4ll
+                   eNuQut5CDp3TvkYx+6OjfQm4E4Pah/j6QGGkVgA8wZd/ojZrJnm8NPq/aIkKZh6z
+                   /nkH89YI7FfWSH+si2mve5Ro5uYigps68BqaEwdeVLuFftVrYXyGNtxpBVEE5l6x
+                   v79IsFBk18PU10YUho/hkGd1+b+d9OrBtmY8bSh8fFrmyNjjZMphMsQDB8rYouIn
+                   NQIDAQAB
+                   -----END PUBLIC KEY-----
 

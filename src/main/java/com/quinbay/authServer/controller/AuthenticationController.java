@@ -2,11 +2,13 @@ package com.quinbay.authServer.controller;
 
 
 import com.quinbay.authServer.dataModels.requests.CustomUser;
+import com.quinbay.authServer.dataModels.requests.TokenRequest;
 import com.quinbay.authServer.dataModels.response.StandardApiResponse;
 import com.quinbay.authServer.dataModels.requests.RegisterRequest;
 import com.quinbay.authServer.service.MyUserDetailsService;
 import com.quinbay.authServer.service.UserRolesService;
 import com.quinbay.authServer.util.JwtUtil;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,7 +28,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
-@Controller
+@Controller()
+@RequestMapping("/auth")
 public class AuthenticationController {
 
 
@@ -50,6 +53,7 @@ public class AuthenticationController {
 
 
     // test method
+    // meant for internal testing only
     @RequestMapping(value = "/test", method = RequestMethod.GET)
     public ResponseEntity<?> test() {
 
@@ -72,9 +76,10 @@ public class AuthenticationController {
 
         try {
             authenticationManager.authenticate( new UsernamePasswordAuthenticationToken( customUser.getUsername(), customUser.getPassword() ) );
-        } catch (BadCredentialsException e) {
+        } catch (Exception e) {
 
             Map<String, Object> data = new HashMap<>();
+            data.put( "errorMessage" , e.getMessage() );
 
             return ResponseEntity.ok( new StandardApiResponse( false, "Incorrect Username and Password", data ) );
         }
@@ -82,7 +87,7 @@ public class AuthenticationController {
 
         final UserDetails userDetails = userDetailsService.loadUserByUsername( customUser.getUsername() );
 
-        final String jwt = jwtTokenUtil.generateToken( userDetails );
+        final String jwt = jwtTokenUtil.generateToken( userDetails, userRolesService.getUserRoles(userDetails.getUsername()) );
 
         Map<String, Object> data = new HashMap<>();
 
@@ -112,7 +117,7 @@ public class AuthenticationController {
 
             final UserDetails userDetails = userDetailsService.loadUserByUsername( registerRequest.toAuthenticationRequest().getUsername() );
 
-            final String jwt = jwtTokenUtil.generateToken( userDetails );
+            final String jwt = jwtTokenUtil.generateToken( userDetails, registerRequest.roles );
             data.put( "jwt", jwt);
 
 
@@ -164,23 +169,29 @@ public class AuthenticationController {
 
 
     // Check If Token is valid
-    @RequestMapping(value = "/validateToken", method = RequestMethod.GET)
-    public ResponseEntity<?> validateToken(@AuthenticationPrincipal CustomUser user){
+    @RequestMapping(value = "/validateToken", method = RequestMethod.POST)
+    public ResponseEntity<?> validateToken(@RequestBody TokenRequest token){
 
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-        String token = request.getHeader("Authorization").split(" ")[1];
+
+        System.out.println(token);
 
         Map<String, Object> data = new HashMap<>();
 
         try{
-            data.put( "valid", jwtTokenUtil.validateToken(token, userDetailsService.loadUserByUsername( jwtTokenUtil.extractUsername(token) )));
+            data.put( "username", jwtTokenUtil.extractUsername(token.getToken()) );
+            data.put("roles", userRolesService.getUserRoles( jwtTokenUtil.extractUsername(token.getToken())));
+            return ResponseEntity.ok( new StandardApiResponse( true, "", data ) );
+        }
+        catch(ExpiredJwtException e){
+            Map<String, Object> errorData = new HashMap<>();
+            return ResponseEntity.ok( new StandardApiResponse( false, "Token Invalid", errorData ) );
         }
         catch(Exception e){
             Map<String, Object> errorData = new HashMap<>();
             return ResponseEntity.ok( new StandardApiResponse( false, "Token Invalid", errorData ) );
         }
 
-        return ResponseEntity.ok( new StandardApiResponse( true, "", data ) );
+
 
     }
 

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -35,8 +36,9 @@ public class JwtUtil {
         return extractExpiration(token).before(new Date());
     }
 
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(UserDetails userDetails, List<String> userRoles) {
         Map<String, Object> claims = new HashMap<>();
+        claims.put( "userroles", userRoles.toString() );
         return createToken(claims, userDetails.getUsername());
     }
 

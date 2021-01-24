@@ -3,6 +3,7 @@ package com.quinbay.authServer.filter;
 import com.quinbay.authServer.service.MyUserDetailsService;
 import com.quinbay.authServer.service.UserRolesService;
 import com.quinbay.authServer.util.JwtUtil;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -42,7 +43,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         String username = null;
         String jwt = null;
 
-        if (authorizationHeader != null && authorizationHeader.startsWith( "Bearer " )) {
+        if (authorizationHeader != null && authorizationHeader.startsWith( "Bearer " )){
             jwt = authorizationHeader.substring( 7 );
             username = jwtUtil.extractUsername( jwt );
         }
@@ -60,8 +61,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication( usernamePasswordAuthenticationToken );
 
 
-                httpServletResponse.setHeader( "userName", jwtUtil.extractUsername( jwt ) );
-                httpServletResponse.setHeader( "userRoles",  userRolesService.getUserRolesAsJson(jwtUtil.extractUsername( jwt )));
+//                httpServletResponse.setHeader( "userName", jwtUtil.extractUsername( jwt ) );
+//                httpServletResponse.setHeader( "userRoles",  userRolesService.getUserRolesAsJson(jwtUtil.extractUsername( jwt )));
 
             }
         }
