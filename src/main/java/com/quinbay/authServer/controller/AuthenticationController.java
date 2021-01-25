@@ -3,6 +3,7 @@ package com.quinbay.authServer.controller;
 
 import com.quinbay.authServer.dataModels.requests.CustomUser;
 import com.quinbay.authServer.dataModels.requests.TokenRequest;
+import com.quinbay.authServer.dataModels.requests.UserRoles;
 import com.quinbay.authServer.dataModels.response.StandardApiResponse;
 import com.quinbay.authServer.dataModels.requests.RegisterRequest;
 import com.quinbay.authServer.service.MyUserDetailsService;
@@ -93,6 +94,8 @@ public class AuthenticationController {
 
         data.put( "jwt", jwt );
 
+        // make an api call to update user details
+
         return ResponseEntity.ok( new StandardApiResponse( true, "", data ) );
 
     }
@@ -132,6 +135,7 @@ public class AuthenticationController {
 
             // make a call to store the interests [API provided by Data Team]
 
+            // make an call to update user details
 
         }catch(Exception e){
 
@@ -144,6 +148,7 @@ public class AuthenticationController {
 
     }
 
+    // TODO: MAKE A ROUTE TO DELETE USER ACCOUNT FROM THE DATA BASE
     // Delete Account API Pending
 
 
@@ -173,8 +178,6 @@ public class AuthenticationController {
     public ResponseEntity<?> validateToken(@RequestBody TokenRequest token){
 
 
-        System.out.println(token);
-
         Map<String, Object> data = new HashMap<>();
 
         try{
@@ -191,8 +194,28 @@ public class AuthenticationController {
             return ResponseEntity.ok( new StandardApiResponse( false, "Token Invalid", errorData ) );
         }
 
+    }
 
 
+    @RequestMapping(value = "/addroles", method = RequestMethod.PUT)
+    public ResponseEntity<?> adduserroles(@RequestBody UserRoles userRoles){
+
+        Map<String, Object> data = new HashMap<>();
+        Map<String, Object> errordata = new HashMap<>();
+
+
+        System.out.println(userRoles.getUsername());
+
+        try {
+            userRolesService.addRoles( userRoles.getRoles(), userRoles.getUsername() );
+            data.put( "message", "succesfully added user roles");
+            data.put( "userroles", userRolesService.getUserRolesAsJson( userRoles.getUsername() ));
+            return ResponseEntity.ok( new StandardApiResponse( true, "", data ) );
+        }catch (Exception e){
+            errordata.put( "errormessage", e.getMessage());
+
+            return ResponseEntity.ok( new StandardApiResponse( false, "Failed To Update User Roles", errordata ) );
+        }
     }
 
 }
